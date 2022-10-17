@@ -100,6 +100,9 @@ class Contract(SourceMapping):  # pylint: disable=too-many-public-methods
         self.compilation_unit: "SlitherCompilationUnit" = compilation_unit
         self.file_scope: "FileScope" = scope
 
+        # memoize
+        self._state_variables_written_in_reentrant_targets: Optional[List["StateVariable"]] = None
+
     ###################################################################################
     ###################################################################################
     # region General's properties
@@ -317,13 +320,6 @@ class Contract(SourceMapping):  # pylint: disable=too-many-public-methods
         return list(self._variables.values())
 
     @property
-    def state_variables_entry_points(self) -> List["StateVariable"]:
-        """
-        list(StateVariable): List of the state variables that are public.
-        """
-        return [var for var in self._variables.values() if var.visibility == "public"]
-
-    @property
     def state_variables_ordered(self) -> List["StateVariable"]:
         """
         list(StateVariable): List of the state variables by order of declaration.
@@ -355,6 +351,16 @@ class Contract(SourceMapping):  # pylint: disable=too-many-public-methods
         slithir_variabless = [f.slithir_variables for f in self.functions + self.modifiers]  # type: ignore
         slithir_variables = [item for sublist in slithir_variabless for item in sublist]
         return list(set(slithir_variables))
+
+    @property
+    def state_variables_written_in_reentrant_targets(self) -> List["StateVariable"]:
+        if self._state_variables_written_in_reentrant_targets is None:
+            reentrant_functions = [f for f in self.functions if f.is_reentrant]
+            variables_writtenss = [f.all_state_variables_written() for f in reentrant_functions]
+            self._state_variables_written_in_reentrant_targets = [
+                item for sublist in variables_writtenss for item in sublist
+            ]
+        return self._state_variables_written_in_reentrant_targets
 
     # endregion
     ###################################################################################
