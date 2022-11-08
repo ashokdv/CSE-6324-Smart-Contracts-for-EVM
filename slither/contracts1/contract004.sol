@@ -6,17 +6,17 @@ contract additionContract
 	uint a1 ;
 	uint a2 ;
 
-	function getFirst(uint x) public
+	function setFirst(uint x) private
 	{
 		a1 = x;
 	}
 
-	function getSecond(uint y) public
+	function setSecond(uint y) private
 	{
 		a2 = y;
 	}
 
-	function addition() view public returns (uint)
+	function addition() view private returns (uint)
 	{
 		uint res = a1 + a2 ;		
 		return res;

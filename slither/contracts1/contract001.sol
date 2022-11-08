@@ -8,15 +8,15 @@ contract multiplyContract {
     int128 a1 ;
     int128 a2 ;
      
-    function getFirst(int128 val1) public {
+    function setFirst(int128 val1) private {
         a1 = val1;
     }
      
-    function getSecond(int128 val2) public {
+    function setSecond(int128 val2) private {
         a2 = val2;
     }
      
-    function multiply() view public returns (int128) {
+    function multiply() view private returns (int128) {
         int128 result = a1 * a2 ;
         return result;
     }
